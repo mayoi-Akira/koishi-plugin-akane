@@ -2,11 +2,10 @@
  * 工具信息接口
  */
 export interface ToolInfo {
-  id: number;
-  toolId: number;
+  toolCode: string;
   toolName: string;
-  toolDesc: string;
-  isEnabled: boolean;
+  description: string;
+  status: string;
 }
 
 /**
@@ -23,7 +22,7 @@ export interface ApiResponse<T> {
  */
 export interface AkaneChatResponse {
   groupId?: string;
-    reply?: string;
+  reply?: string;
 }
 
 /**

@@ -1,8 +1,8 @@
-import { Context} from 'koishi';
-import {ApiResponse, AkaneChatResponse} from '../types'
+import { Context } from "koishi";
+import { ApiResponse, AkaneChatResponse } from "../types";
 
 export function registerChatCommand(ctx: Context) {
-    ctx
+  ctx
     .command("ag <message:text>", "与akane对话")
     .action(async ({ session }, message) => {
       const url = "http://localhost:1145/chat";
@@ -11,19 +11,22 @@ export function registerChatCommand(ctx: Context) {
       if (!message?.trim()) {
         return "请输入要发送给 akane 的内容。";
       }
-      if (message.length > 500) {
-        return "消息过长，akane 读不过来了，请限制在500个字以内";
+      if (message.length > 1000) {
+        return "消息过长，akane 读不过来了，请限制在1000个字以内";
       }
       const userId = session?.userId;
       if (userId) {
         message = `用户${userId}说：${message}`;
       }
       try {
-        const response = await ctx.http.post<ApiResponse<AkaneChatResponse>>(url, {
-          groupId: groupId,
-          userInput: message,
-        });
-        console.log(session?.userId);
+        const response = await ctx.http.post<ApiResponse<AkaneChatResponse>>(
+          url,
+          {
+            groupId: groupId,
+            userInput: message,
+          },
+        );
+        // console.log(session?.userId);
 
         const reply = response?.data?.reply?.trim();
         if (!reply) {

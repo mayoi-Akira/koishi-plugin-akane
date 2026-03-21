@@ -1,10 +1,13 @@
-import { Context } from 'koishi';
-import { ToolInfo } from '../types';
+import { Context } from "koishi";
+import { ToolInfo } from "../types";
 
 /**
  * 渲染工具列表为图片
  */
-export async function renderToolsListImage(tools: ToolInfo[], ctx: Context): Promise<Buffer> {
+export async function renderToolsListImage(
+  tools: ToolInfo[],
+  ctx: Context,
+): Promise<Buffer> {
   const html = `
 <!DOCTYPE html>
 <html>
@@ -114,22 +117,22 @@ export async function renderToolsListImage(tools: ToolInfo[], ctx: Context): Pro
               tools.length > 0
                 ? tools
                     .map(
-                      tool => `
+                      (tool) => `
                 <div class="tool-item">
                     <div class="tool-meta">
                         <div class="tool-name-id">
                             <div class="tool-name">${tool.toolName}</div>
-                            <div class="tool-id">ID: ${tool.toolId}</div>
+                            <div class="tool-id">ID: ${tool.toolCode}</div>
                         </div>
-                        <div class="tool-status ${tool.isEnabled ? 'enabled' : 'disabled'}">
-                            ${tool.isEnabled ? '启用' : '禁用'}
+                        <div class="tool-status ${tool.status == "DISENABLE" ? "disabled" : "enabled"}">
+                            ${tool.status == "DISENABLE" ? "禁用" : "启用"}
                         </div>
                     </div>
-                    <div class="tool-desc">${tool.toolDesc}</div>
+                    <div class="tool-desc">${tool.description}</div>
                 </div>
-            `
+            `,
                     )
-                    .join('')
+                    .join("")
                 : '<div class="empty-state"><p>No tools available</p></div>'
             }
         </div>
@@ -140,9 +143,12 @@ export async function renderToolsListImage(tools: ToolInfo[], ctx: Context): Pro
   const page = await ctx.puppeteer.page();
   try {
     await page.setContent(html);
-    await page.setViewport({ width: 750, height: Math.max(400, tools.length * 90 + 120) });
+    await page.setViewport({
+      width: 750,
+      height: Math.max(400, tools.length * 90 + 120),
+    });
     const screenshot = await page.screenshot({
-      type: 'png',
+      type: "png",
       fullPage: true,
     });
     return screenshot as Buffer;

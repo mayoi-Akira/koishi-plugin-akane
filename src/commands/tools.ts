@@ -1,6 +1,6 @@
 import { Context, h } from "koishi";
 import { ApiResponse, ToolListResponse } from "../types";
-import { renderToolsListImage } from "../services/renderer";
+import { renderToolsListImage } from "../services/getToolsList";
 
 const BaseUrl = "http://localhost:1145/tools";
 

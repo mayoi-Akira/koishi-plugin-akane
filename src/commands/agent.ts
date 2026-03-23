@@ -13,6 +13,7 @@ export function registerAgentCommand(ctx: Context) {
         const response = await ctx.http.get<ApiResponse<string>>(url, {
           params: {
             groupId: groupId,
+            messageId: session?.messageId,
           },
         });
         return response?.message?.trim();

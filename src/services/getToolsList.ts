@@ -1,5 +1,6 @@
 import { Context } from "koishi";
 import { ToolInfo } from "../types";
+import { renderHtmlToImage } from "../utils/htmlRenderer";
 
 /**
  * 渲染工具列表为图片
@@ -140,19 +141,10 @@ export async function renderToolsListImage(
 </body>
 </html>`;
 
-  const page = await ctx.puppeteer.page();
-  try {
-    await page.setContent(html);
-    await page.setViewport({
-      width: 750,
-      height: Math.max(400, tools.length * 90 + 120),
-    });
-    const screenshot = await page.screenshot({
-      type: "png",
-      fullPage: true,
-    });
-    return screenshot as Buffer;
-  } finally {
-    await page.close();
-  }
+  return renderHtmlToImage(
+    html,
+    750,
+    Math.max(400, tools.length * 90 + 120),
+    ctx,
+  );
 }

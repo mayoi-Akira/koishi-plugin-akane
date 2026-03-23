@@ -1,5 +1,6 @@
 import { Context } from "koishi";
 import { ApiResponse, AkaneChatResponse } from "../types";
+import { chatResponseService } from "../services/chatServiceHTML";
 
 export function registerChatCommand(ctx: Context) {
   ctx
@@ -7,6 +8,8 @@ export function registerChatCommand(ctx: Context) {
     .action(async ({ session }, message) => {
       const url = "http://localhost:1145/chat";
       const groupId = session?.channelId ?? session?.userId;
+      const userId = session?.userId;
+      const messageId = session?.messageId;
 
       if (!message?.trim()) {
         return "请输入要发送给 akane 的内容。";
@@ -14,16 +17,15 @@ export function registerChatCommand(ctx: Context) {
       if (message.length > 1000) {
         return "消息过长，akane 读不过来了，请限制在1000个字以内";
       }
-      const userId = session?.userId;
-      if (userId) {
-        message = `用户${userId}说：${message}`;
-      }
+      // console.log(message);
       try {
         const response = await ctx.http.post<ApiResponse<AkaneChatResponse>>(
           url,
           {
             groupId: groupId,
-            userInput: message,
+            messageId: messageId,
+            userId: userId,
+            userMessage: message,
           },
         );
         // console.log(session?.userId);
@@ -32,7 +34,10 @@ export function registerChatCommand(ctx: Context) {
         if (!reply) {
           return "akane 没有返回有效内容，请稍后重试。";
         }
-        return reply;
+        // console.log(reply);
+
+        chatResponseService(reply, session, ctx);
+        // return;
       } catch (error: unknown) {
         const err = error as {
           message?: string;
